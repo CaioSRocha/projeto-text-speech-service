@@ -20,6 +20,8 @@
             <div class="input-field col s12">
               <textarea name="text" id="comment" class="materialize-textarea"></textarea>
               <label for="textarea1">Digite seu comentário</label>
+              <div id="empty">
+              </div>
             </div>
             <button id="teste" class="btn waves-effect waves-light" type="submit" name="action">Salvar
               <i class="material-icons right">send</i>
@@ -33,12 +35,14 @@
   <div class=" container right" id="comments"></div>
 
 
-  <script src="/controllers/indexController.js"></script>
+  <!-- <script src="/controllers/indexController.js"></script> -->
   <script type="text/javascript" src="/js/materialize.min.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
   <script>
 
+
+    const empty = document.getElementById('empty');
     async function getComments() {
 
       const comments = await axios.get(`/comments-all`)
@@ -61,7 +65,8 @@
                   Your browser does not support the audio element.
                   </audio>
                   <input id="idCard${item.id}" class="cardComment" value="${item.id}" type="hidden">
-                  <div class="divAudio"> </div>
+                  <div class="divAudio">
+                  </div>
                   
                 </div>
                </div>
@@ -73,10 +78,28 @@
       document.querySelector('#comments').innerHTML = data;
     }
 
-    async function submitComments(e) {
+    async function commentEmpty() {
+
+      let divEmpty = `
+        <span class="emptyField">Campo obrigatório</span>
+      `
+      document.getElementById('empty').innerHTML = divEmpty
+    }
+
+    async function submitComments() {
       try {
-        const value = document.getElementById("comment").value;
+        const value = document.getElementById("comment").value.trim();
+
+        
+        
         const response = await axios.post(`/comments`, value);
+        
+          let divEmpty = `
+              <span class="emptyField">Campo obrigatório</span>
+            `
+          document.querySelector('#empty').innerHTML = divEmpty
+        
+        console.log(response)
 
         if (response.status === 200) {
           const data = `
@@ -86,9 +109,9 @@
                   <div class="card-content white-text">
                     <span class="card-title">Comentário</span>
                     <p>${response.text}</p>
-                    </div>
-                    <div class="card-action ">
-                    <audio controls>
+                     </div>
+                       <div class="card-action ">
+                        <audio controls>
                         <source src="/audio/audio_${response.id}.wav" type="audio/wav">
                         Your browser does not support the audio element.
                       </audio>                   

@@ -16,18 +16,23 @@ class Comments {
 
     async store(req, res) {
         try {
-            const textBody = req.body
+            const textBody = req.body.text
+
             let comment = {
-                text: textBody.text
+                text: textBody.trim()
             }
 
             const result = await CommentsService.store(comment);
 
+            if(result.title_msg){
+                return res.redirect("/comments") 
+            }
+            
             const { id, text } = result.dataValues
 
             if (id) await CommentsService.textAudio(text, id);
 
-            res.render("index");
+            res.redirect(200,"/comments");
         } catch (e) {
             return res.status(500).json(e);
         }
@@ -35,5 +40,4 @@ class Comments {
 
 
 }
-
 module.exports = new Comments;

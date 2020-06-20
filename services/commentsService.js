@@ -13,7 +13,7 @@ class CommentsSevices {
         try {
             return await this.CommentsDb.findAll();
         } catch (e) {
-            return undefined;
+            return undefined
         }
     }
 
@@ -28,9 +28,10 @@ class CommentsSevices {
     async store(comment) {
 
         let errors = {};
+        const {text} = comment
 
-        let valid = this.validate(comment, errors);
-
+        let valid = this.validate(text, errors);
+        
         if (valid) {
             try {
                 const result = await this.CommentsDb.create(comment);
@@ -44,10 +45,10 @@ class CommentsSevices {
         }
     }
 
-    validate(comment, errors) {
+    validate(text, errors) {
 
         let erroCount = 0;
-        if (!comment.text) {
+        if (!text) {
             errors.title_msg = "Campo vazio";
             erroCount++;
         }
@@ -62,11 +63,8 @@ class CommentsSevices {
 
     async textAudio(comment, id) {
         try {
-
             const audio = `audio_${id}`;
-
             await this.textSpeechService.create(comment, audio);
-
         } catch (e) {
             console.log('Tente novamente.')
         }
